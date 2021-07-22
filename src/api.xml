@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+   "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+   "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <package name="api-json" namespace="/api" extends="struts-default,json-default">
+    	<result-types>
+			<result-type name="json" class="org.apache.struts2.json.JSONResult" />
+		</result-types>
+	    <action name="createNewPayment" class="com.ticketbooking.controller.BookingTransactionController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		<action name="createCustomerContact" class="com.ticketbooking.controller.BookingTransactionController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">/errorRedirect.jsp</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		<action name="getMovieInformation" class="com.ticketbooking.controller.ShowInfoController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage,lstShowInformation.*</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		<action name="getContactInformation" class="com.ticketbooking.controller.ShowInfoController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage,lstShowInformation.*</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		
+		<action name="getBookedSeatInformation" class="com.ticketbooking.controller.BookingTransactionController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage,lstBookedSeatInformation.*</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		
+		
+</package>
+</struts>

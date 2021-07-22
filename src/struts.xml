@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+
+<struts>
+	<!-- <constant name="struts.action.extension" value=".app" /> -->
+	<constant name="struts.devMode" value="true" />
+	<!-- <constant name="struts.enable.DynamicMethodInvocation" value="false" 
+		/> -->
+	<include file="api.xml" />
+	<include file="struts-default.xml" />
+	<package name="TicketBookingApp" extends="struts-default,json-default">
+		<action name="newTicketBooking"
+			class="com.ticketbooking.controller.BookingTransactionController">
+			<result name="success">/errorRedirect.jsp</result>
+			<result name="input">/Input.jsp</result>
+		</action>
+		<action name="getMovieInformation" class="com.ticketbooking.controller.ShowInfoController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage,lstShowInformation.*</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		<action name="getBookedSeatInformation" class="com.ticketbooking.controller.BookingTransactionController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage,lstBookedSeatInformation.*</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+	</package>
+	<package name="json-default" extends="struts-default">
+		<result-types>
+			<result-type name="json" class="org.apache.struts2.json.JSONResult" />
+		</result-types>
+		<interceptors>
+			<interceptor name="json"
+				class="org.apache.struts2.json.JSONInterceptor" />
+		</interceptors>
+	</package>
+</struts>

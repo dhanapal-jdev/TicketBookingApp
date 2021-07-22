@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<struts>
+	<package name="website" namespace="/api" extends="struts-default,json-default">
+		<action name="newTicketBookingdump" class="com.ticketbooking.controller.BookingTransactionController"
+			>
+			<result name="success">errorRedirect.jsp</result>
+		</action>
+		<action name="errorPage">
+			<result>errorRedirect.jsp</result>
+		</action>
+	</package>
+</struts>
