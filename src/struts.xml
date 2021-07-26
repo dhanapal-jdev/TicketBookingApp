@@ -33,7 +33,28 @@
 			    <param name="includeProperties">errorCode,errorMessage</param>
 			</result>
 			<result name="success" type="json">
-			    <param name="includeProperties">errorCode,errorMessage,lstBookedSeatInformation.*</param>
+			    <param name="includeProperties">errorCode,errorMessage,lstSeatTransactionInfo.*</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		<action name="newTicketBooking" class="com.ticketbooking.controller.BookingTransactionController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage,bookTrnx,eMail,phone</param>
+			</result>
+			<!-- <result name="success">/errorRedirect.jsp</result> -->
+		</action>
+		
+		<action name="seatHoldAction" class="com.ticketbooking.controller.BookingTransactionController">
+			<result name="input" type="json"></result>
+			<result name="error" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
+			</result>
+			<result name="success" type="json">
+			    <param name="includeProperties">errorCode,errorMessage</param>
 			</result>
 			<!-- <result name="success">/errorRedirect.jsp</result> -->
 		</action>

@@ -90,8 +90,8 @@ public class ShowInformationDaoImpl implements ShowInformationDao {
 			while (ressultSet.next()) {
 				seatTransactionModel = new SeatTransactionModel();
 				seatTransactionModel.setBookTrnx(ressultSet.getLong("B.BOOK_TRNX"));
-				seatTransactionModel.setRowId(ressultSet.getString("S.ROW_ID"));
-				seatTransactionModel.setSeatNumber(ressultSet.getString("S.SEAT_NUMBER"));
+				seatTransactionModel.setRowId(ressultSet.getLong("S.ROW_ID"));
+				seatTransactionModel.setSeatNumber(ressultSet.getLong("S.SEAT_NUMBER"));
 				lstSeatTransactionModel.add(seatTransactionModel);
 				
 			}

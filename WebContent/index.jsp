@@ -11,19 +11,25 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"
 	integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
 	crossorigin="anonymous"></script>
+	<script type="text/javascript" src="js/libs/md5.js"> </script>
 <script type="text/javascript">
 	var maxSeatSelection = 0;
 	var minSeatSelection = 0;
+	var REQUEST_DOMAIN ="http://localhost:8080/TicketBookingApp";
 	var jsonSeatInfo = {};
 	var jsonSeat = {};
 	$(document).ready(
 			function() {
 				generateResponderList();
-				 $('.booknow').click(function(){
+				regenerateDeviceUniqueID();
+				 $('.booknow').click(function(e){
+					 e.preventDefault();
 					console.log($( "form" ).serialize());
 					var dataBooking = {};
-					dataBooking['customerInfo'] = $( "form" ).serialize();
-					dataBooking['seatBookingInfo'] = jsonSeat;
+					var deviceID = get_cookie('deviceUID');
+					dataBooking =  $( "form" ).serialize() + "&deviceHash="+deviceID;
+					//dataBooking['seatBookingInfo'] = jsonSeat;
+					console.log("data" + JSON.stringify(dataBooking));
 					 $
 						.ajax({
 							type : "POST",
@@ -34,14 +40,25 @@
 						})
 						.done(
 								function(data, textStatus, jqXHR) {
-									console.log("Data " + data);
+									console.log("Data " + JSON.stringify(data));
+									if(data.errorCode == 1){
+										alert("Your ticket successfully Booked!! \n Hi, "+ data.eMail + "\n Thank you for booking,\n Reference Number : " + data.bookTrnx);
+										
+									}else if(data.errorCode == 7){
+										alert("Please try again!! your holding ticket time was expired!!");
+									}
+									maxSeatSelection = 0;
+									minSeatSelection = 0;
+									$('#seatBookingInfo').val();
+									var modal = document.getElementById("contactPopup");
+									modal.style.display = "none";
 								});
 				}); 
 				$('.showContent').on(
 						'click',
 						function(e) {
 							/* console.log("Data :: " + $(this).filter('.show').text()); */
-							console.log("Data1 :: " + $(this).text());
+							//console.log("Data1 :: " + $(this).text());
 							console.log(JSON.stringify($(this).children(
 									'input[class=show]').val()));
 							var showId = $(this).children('input[class=show]')
@@ -55,6 +72,7 @@
 							var seatTransaction = $(this).children('input[class=seatbooked]').val();
 					
 							creatSeatView(noofSeat, seatTransaction);
+							$("#showId").val(showId);
 							ticketBookedExists(showId);
 							var modal = document.getElementById("seatPopup");
 							modal.style.display = "block";
@@ -135,8 +153,6 @@
 										var lstMovieInfo = lstShowInformation[i].lstMovieInfo;
 										var lstBookedSeat = lstShowInformation[i].LstSeatTransactionInfo;
 										for ( var j = 0; j < lstHallInfo.length; j++) {
-											console.log("Data :: "
-													+ lstHallInfo[j].address);
 											hallID = lstHallInfo[j].hallId;
 											hallName = lstHallInfo[j].name;
 											hallAddress = lstHallInfo[j].address;
@@ -144,9 +160,6 @@
 											hallSeat = lstHallInfo[j].seat;
 										}
 										for ( var j = 0; j < lstMovieInfo.length; j++) {
-											console
-													.log("Data :: "
-															+ lstMovieInfo[j].movieName);
 											movieID = lstMovieInfo[j].movieId;
 											movieName = lstMovieInfo[j].movieName;
 											movieDuration = lstMovieInfo[j].duration;
@@ -220,30 +233,42 @@
 					var totalCheckboxes = $('input:checkbox').length;
 					var numberNotChecked = totalCheckboxes - numberOfChecked;
 					if ($(this).is(':checked')){
+						if(maxSeatSelection < 6){
+							
 						maxSeatSelection  = maxSeatSelection + 1;
 						var val = $(this).val(); //.split(":");
 						console.log("Json Data :: " +arrayVal);
 						var arrayVal = val.split(":");
 						jsonSeat['key'+arrayVal[0]+arrayVal[1]] = val;
 						console.log("Json Data :: " + JSON.stringify(jsonSeat));
+						}else{
+							alert("You have reached maximum seat selection ");
+							if ($(this).is(':checked'))
+								$(this).prop("checked", false);
+						}
 					}
 					else{
+						
 						var val = $(this).val(); //.split(":");
-						console.log("Json Data :: " +arrayVal);
 						var arrayVal = val.split(":");
+						console.log("Json Data :: " +arrayVal);
 						delete jsonSeat['key'+arrayVal[0]+arrayVal[1]] ;
-						console.log("Json Data :: " + JSON.stringify(jsonSeat));
 						maxSeatSelection  = maxSeatSelection - 1;
+						console.log("Json Data :: " + JSON.stringify(jsonSeat) + maxSeatSelection);
 					}
+					
+					
 					console.log("Data selection " + maxSeatSelection);
-					if (maxSeatSelection > 6) {
+/* 					if (maxSeatSelection > ) {
 
 						alert("You have reached maximum seat selection ");
 						if ($(this).is(':checked'))
 							$(this).prop("checked", false);
-					}
+					} */
+					$('#seatBookingInfo').val(JSON.stringify(jsonSeat));
 				});
 		$('.seatselected').click(function(){
+			seatHold4Payment();
 			var numberOfChecked = $('input:checkbox:checked').length;
 			if(maxSeatSelection > 0){
 				
@@ -255,7 +280,75 @@
 				alert("Please Select atleat one seat");
 			}
 		});
+		
+		
 
+	}
+	function setCookie(key, value) 
+	{
+		var date = new Date(),
+	    expires = 'expires=';
+		date.setDate(date.getDate() + 1);
+		expires += date.toGMTString();
+		document.cookie = key + '=' + value + '; ' + expires + '; path=/';
+	}
+	var delete_cookie = function(name) {
+	    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	};
+	function get_cookie( name ) 
+	{
+		var start = document.cookie.indexOf( name + "=" );
+		var len = start + name.length + 1;
+		if ( ( !start ) && ( name != document.cookie.substring( 0, name.length ) ) )
+		{
+			return null;
+		}
+		if ( start == -1 ) return null;
+		var end = document.cookie.indexOf( ";", len );
+		if ( end == -1 ) end = document.cookie.length;
+		return unescape( document.cookie.substring( len, end ) );
+	}
+
+	function seatHold4Payment(){
+		var seatSelected  =  $('#seatBookingInfo').val();
+		var showId  =  $('#showId').val();
+		var deviceID = get_cookie('deviceUID');
+		var data = "seatBookingInfo="+ seatSelected + "&deviceHash="+deviceID + "&showId="+showId;
+		$.ajax({
+			type : "POST",
+			url : "<s:url action='seatHoldAction'/>",
+			dataType : "json",
+			data: data,
+			async : false
+		}).done(function(data, textStatus, jqXHR) {
+			if (data.errorCode == 1) {
+				console.log("Successfully inserted");
+				}
+			
+ 		});
+	}
+	function regenerateDeviceUniqueID()
+	{
+		var existingDeviceId = JSON.parse(localStorage.getItem(""));
+		if(existingDeviceId == null) 
+		{
+			var navigator_info = window.navigator;
+			var screen_info = window.screen;
+			var uid = navigator_info.mimeTypes.length;
+			uid += navigator_info.userAgent.replace(/\D+/g, '');
+			uid += navigator_info.plugins.length;
+			uid += screen_info.height || '';
+			uid += screen_info.width || '';
+			uid += screen_info.pixelDepth || '';
+					console.log("uid" + uid);
+			
+			var deviceID = hex_md5(uid);
+			
+			localStorage.setItem('deviceUniqueID', JSON.stringify(deviceID));
+			setCookie("deviceUID", deviceID); 
+			
+			return deviceID;
+		}
 	}
 	
 	function ticketBookedExists(showId) {
@@ -263,21 +356,21 @@
 			type : "POST",
 			url : "<s:url action='getBookedSeatInformation'/>",
 			dataType : "json",
+			data: {"showId":showId},
 			async : false
 		}).done(function(data, textStatus, jqXHR) {
 			if (data.errorCode == 1) {
-				var lstSeatBooked = data.lstBookedSeatInformation;
-				console.log(JSON.stringify(lstSeatBooked));
-
-				/* if (lstSeatBooked.length > 0) {
+				var lstSeatBooked = data.lstSeatTransactionInfo;
+				
+				 if (lstSeatBooked.length > 0) {
 					for ( var i = 0; i < lstSeatBooked.length; i++) {
-						var rowId = lstSeatBooked[i].showId;
+						var rowId = lstSeatBooked[i].rowId;
 						var seatNumber = lstSeatBooked[i].seatNumber;
-						console.log("Data :: " + rowId + " :: " + seatNumber);
-
+						$('#'+rowId +seatNumber ).prop('checked',true);
+						$('#'+rowId +seatNumber ).attr("disabled", true);
 					}
 				}
- */
+ 
 			}
 		});
 
@@ -496,8 +589,10 @@
 					<label for="city" class="inputsapce">City </label> <input id="city" type="text"
 						name="city"  />
 				</div>
-				
+				<input type = "hidden" id="seatBookingInfo" name="seatBookingInfo"  value=""/>
+				<input type = "hidden" id="showId" name="showId"  value=""/>
 				<input type = "button" class="booknow" value="Book Now"/>
+				<input type = "button" class="booknow" value="Back">
 				<input type = "button" class="cancel" value="Cancel"/>
 			</div>
 		</div>

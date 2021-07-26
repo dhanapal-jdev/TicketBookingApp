@@ -4,7 +4,7 @@ public class SeatTransactionModel {
 
 	private long seatId = 0, bookTrnx = 0;
 	
-	private String rowId = "", seatNumber = "";
+	private long rowId = 0, seatNumber = 0;
 
 	/**
 	 * @return the seatId
@@ -37,28 +37,28 @@ public class SeatTransactionModel {
 	/**
 	 * @return the rowId
 	 */
-	public String getRowId() {
+	public long getRowId() {
 		return rowId;
 	}
 
 	/**
 	 * @param rowId the rowId to set
 	 */
-	public void setRowId(String rowId) {
+	public void setRowId(long rowId) {
 		this.rowId = rowId;
 	}
 
 	/**
 	 * @return the seatNumber
 	 */
-	public String getSeatNumber() {
+	public long getSeatNumber() {
 		return seatNumber;
 	}
 
 	/**
 	 * @param seatNumber the seatNumber to set
 	 */
-	public void setSeatNumber(String seatNumber) {
+	public void setSeatNumber(long seatNumber) {
 		this.seatNumber = seatNumber;
 	}
 	

@@ -16,6 +16,6 @@ import com.ticketbooking.model.SeatTransactionModel;
 public interface BookingTransactionDao {
 
 	public List<SeatTransactionModel> getBookedSeatInformation(long showId) throws SQLException;
-	public List<BookingTransactionModel> creatNewBooking(BookingTransactionModel bookingTransactionModel) throws SQLException;
+	public long creatNewBooking(long showId,long customerId, Long currentTime, List<SeatTransactionModel> lstSeatTransactionModel) throws SQLException;
 	public List<BookingTransactionModel> getAllBookedInformation(BookingTransactionModel bookingTransactionModel) throws SQLException;
 }
