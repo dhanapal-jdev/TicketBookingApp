@@ -37,7 +37,7 @@ public class BookingTransactionDaoImpl implements BookingTransactionDao{
 		PreparedStatement preparedStatement = null;
 		try {
 			lstSeatTransactionModel = new ArrayList<SeatTransactionModel>();
-			String strQuery = "select S.ROW_ID, S.SEAT_NUMBER, S.BOOK_TRNX from booking_transaction AS B, seat_transaction AS S where  B.BOOKED_STATUS= 1 AND B.PAYMENT_STATUS = 1  AND B.SHOW_ID = ? ";
+			String strQuery = "select S.ROW_ID, S.SEAT_NUMBER, S.BOOK_TRNX from booking_transaction AS B, seat_transaction AS S where B.BOOK_TRNX = S.BOOK_TRNX AND  B.BOOKED_STATUS= 1 AND B.PAYMENT_STATUS = 1  AND B.SHOW_ID = ? ";
 			preparedStatement = con.prepareStatement(strQuery);
 			preparedStatement.setLong(1, showId);
 			

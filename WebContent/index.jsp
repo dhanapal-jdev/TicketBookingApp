@@ -24,6 +24,9 @@
 				regenerateDeviceUniqueID();
 				 $('.booknow').click(function(e){
 					 e.preventDefault();
+					 var email = $("#eMail").val();
+					 var phone = $("#phone").val();
+					 if(email != "" && phone != ""){
 					console.log($( "form" ).serialize());
 					var dataBooking = {};
 					var deviceID = get_cookie('deviceUID');
@@ -50,9 +53,13 @@
 									maxSeatSelection = 0;
 									minSeatSelection = 0;
 									$('#seatBookingInfo').val();
+									$('#customerInfo').trigger("reset");
 									var modal = document.getElementById("contactPopup");
 									modal.style.display = "none";
 								});
+					 }else{
+						 alert("Please fille required fields value Email and Phone number!!");
+					 }
 				}); 
 				$('.showContent').on(
 						'click',
@@ -549,7 +556,7 @@
 		<div id="mainviewshow"></div>
 	</div>
 	<div id="contactPopup" class="modal">
-	<form name="customerInfo">
+	<form name="customerInfo" id="customerInfo">
 		<!-- Modal content -->
 		<div class="modal-content">
 			<span class="close contactClose">&times;</span>
@@ -592,7 +599,7 @@
 				<input type = "hidden" id="seatBookingInfo" name="seatBookingInfo"  value=""/>
 				<input type = "hidden" id="showId" name="showId"  value=""/>
 				<input type = "button" class="booknow" value="Book Now"/>
-				<input type = "button" class="booknow" value="Back">
+				<input type = "button" class="back" value="Back">
 				<input type = "button" class="cancel" value="Cancel"/>
 			</div>
 		</div>
