@@ -469,4 +469,70 @@ public class BookingTransactionDaoImpl implements BookingTransactionDao{
 		return lstSeatTransactionModel;
 	}
 
+
+	public boolean checkTicketBooked(long showId,
+			List<SeatTransactionModel> lstSeatTransactionModel) {
+		// TODO Auto-generated method stub
+		boolean toRet = false;
+		System.out.println("Check Booked status " + showId);
+		ResultSet resultSet = null;
+		PreparedStatement preparedStatement = null;
+		try {
+			StringBuffer strQry = new StringBuffer();
+			System.out.println("Check Booked status 1 " + lstSeatTransactionModel.size());
+			if(lstSeatTransactionModel.size() > 0){
+				strQry.append("select S.BOOK_TRNX, S.ROW_ID, S.SEAT_NUMBER from booking_transaction as B, seat_transaction as S where S.BOOK_TRNX = B.BOOK_TRNX AND  B.BOOKED_STATUS= 1 AND B.PAYMENT_STATUS = 1  AND B.SHOW_ID = ?  AND S.ROW_ID = ? AND S.SEAT_NUMBER = ? ");
+				for (int i = 1; i < lstSeatTransactionModel.size() ; i++) {
+					strQry.append("  UNION ALL select S.BOOK_TRNX, S.ROW_ID, S.SEAT_NUMBER from booking_transaction as B, seat_transaction as S where S.BOOK_TRNX = B.BOOK_TRNX AND  B.BOOKED_STATUS= 1 AND B.PAYMENT_STATUS = 1  AND B.SHOW_ID = ?  AND S.ROW_ID = ? AND S.SEAT_NUMBER = ? ");
+				}
+				preparedStatement = con.prepareStatement(strQry.toString());	
+				int j = 1;
+				System.out.println("Check Booked status 1 " + strQry.toString());
+				for (int k = 0; k < lstSeatTransactionModel.size(); k++) {
+					preparedStatement.setLong(j, showId);
+					j++;
+					preparedStatement.setLong(j, lstSeatTransactionModel.get(k).getRowId());
+					j++;
+					preparedStatement.setLong(j, lstSeatTransactionModel.get(k).getSeatNumber());
+					j++;
+				}
+				
+			}else{
+				return toRet;
+			}
+			System.out.println(" Data found " + preparedStatement.toString());
+			
+			resultSet = preparedStatement.executeQuery();
+			
+			while(resultSet.next()){
+				System.out.println(" Data found " );
+				toRet = true;
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			System.out.println("Error while fetching Booked Seat Information :: " + e.getMessage());
+		}catch(Exception e){
+			System.out.println("Error while fetching Booked Seat Information :: " + e.getMessage());
+		}
+		finally{
+			try {
+				if(preparedStatement != null){
+					preparedStatement.clearParameters();
+					preparedStatement.close();
+					preparedStatement = null;
+				}
+				if (resultSet != null) {
+					resultSet.close();
+					resultSet = null;
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		return toRet;
+
+	}
+
 }

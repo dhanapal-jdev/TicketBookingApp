@@ -49,6 +49,8 @@ public class BookingTransactionController extends ActionSupport {
 
 	private static final int SEAT_BOOKING_TIME_ELAPSED = 7;
 
+	private static final int BOOKING_TICKET_FAIL = 8;
+
 	List<BookingTransactionModel> lstBookedSeatInformation = null;
 	List<SeatTransactionModel> lstSeatTransactionInfo = null;
 	CustomerContactsModel customerInfo = null;
@@ -357,6 +359,7 @@ public class BookingTransactionController extends ActionSupport {
 			errorMessageVal
 			.put(BookingTransactionController.SEAT_BOOKING_TIME_ELAPSED,
 					"Seat selection time elapsed please retry again!!!");
+			errorMessageVal.put(BookingTransactionController.BOOKING_TICKET_FAIL, "Ticket you trying to book was booked someone, Please try again!!!");
 		}
 	}
 
@@ -527,22 +530,31 @@ public class BookingTransactionController extends ActionSupport {
 							city, state, zipCode, currentTime);
 				}
 				System.out.println(" Customer ID :: " + customerId);
-				bookTrnx = bookingTransactionDaoImpl.creatNewBooking(showId,
-						customerId, currentTime, lstSeatTransactionModel);
+				boolean checkTicketBooked = bookingTransactionDaoImpl.checkTicketBooked(showId,lstSeatTransactionModel);
+				if(!checkTicketBooked){
+					bookTrnx = bookingTransactionDaoImpl.creatNewBooking(showId,
+							customerId, currentTime, lstSeatTransactionModel);
+					if (bookTrnx > 0) {
+						toRet = SUCCESS;
+						this.errorCode = BookingTransactionController.BOOKING_NO_ERROR;
+						this.errorMessage = "Succefully fetch data from server";
+
+					} else {
+						toRet = ERROR;
+						this.errorCode = BookingTransactionController.BOOKING_UNKNOWN_ERROR;
+						this.errorMessage = "Technical error while booking Ticket's";
+
+					}
+
+				}else{
+					toRet = ERROR;
+					this.errorCode = BookingTransactionController.BOOKING_TICKET_FAIL;
+					this.errorMessage = "Ticket you trying to book was booked someone, Please try again!!!";
+					
+				}
 				// lstSeatTransactionModel =
 				// bookingTransactionDaoImpl.getBookedSeatInformation(showId);
-				if (bookTrnx > 0) {
-					toRet = SUCCESS;
-					this.errorCode = BookingTransactionController.BOOKING_NO_ERROR;
-					this.errorMessage = "Succefully fetch data from server";
-
 				} else {
-					toRet = ERROR;
-					this.errorCode = BookingTransactionController.BOOKING_UNKNOWN_ERROR;
-					this.errorMessage = "Technical error while booking Ticket's";
-
-				}
-			} else {
 				toRet = ERROR;
 				this.errorCode = BookingTransactionController.SEAT_BOOKING_TIME_ELAPSED;
 				this.errorMessage = "Please select the seat again!!!";
@@ -555,6 +567,8 @@ public class BookingTransactionController extends ActionSupport {
 		}
 		return toRet;
 	}
+
+	
 
 	/**
 	 * @return the lstTicketBookedInformation

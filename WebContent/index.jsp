@@ -43,7 +43,7 @@
 						})
 						.done(
 								function(data, textStatus, jqXHR) {
-									console.log("Data " + JSON.stringify(data));
+									console.log("Booking Data :: " + JSON.stringify(data));
 									if(data.errorCode == 1){
 										alert("Your ticket successfully Booked!! \n Hi, "+ data.eMail + "\n Thank you for booking,\n Reference Number : " + data.bookTrnx);
 										
@@ -52,10 +52,10 @@
 									}
 									maxSeatSelection = 0;
 									minSeatSelection = 0;
-									$('#seatBookingInfo').val();
+									/* $('#seatBookingInfo').val();
 									$('#customerInfo').trigger("reset");
 									var modal = document.getElementById("contactPopup");
-									modal.style.display = "none";
+									modal.style.display = "none"; */
 								});
 					 }else{
 						 alert("Please fille required fields value Email and Phone number!!");
