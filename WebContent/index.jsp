@@ -48,14 +48,16 @@
 										alert("Your ticket successfully Booked!! \n Hi, "+ data.eMail + "\n Thank you for booking,\n Reference Number : " + data.bookTrnx);
 										
 									}else if(data.errorCode == 7){
-										alert("Please try again!! your holding ticket time was expired!!");
+										alert(data.errorMessage);
+									}else if(data.errorCode == 8){
+										alert(data.errorMessage);
 									}
 									maxSeatSelection = 0;
 									minSeatSelection = 0;
-									/* $('#seatBookingInfo').val();
+									 $('#seatBookingInfo').val();
 									$('#customerInfo').trigger("reset");
 									var modal = document.getElementById("contactPopup");
-									modal.style.display = "none"; */
+									modal.style.display = "none"; 
 								});
 					 }else{
 						 alert("Please fille required fields value Email and Phone number!!");
